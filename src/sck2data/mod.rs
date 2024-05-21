@@ -1,6 +1,6 @@
-use std::{collections::HashMap, fs::File};
 use byteorder::{BigEndian, ReadBytesExt};
 use std::io::{self, Read};
+use std::{collections::HashMap, fs::File};
 
 use crate::sc2kcity::*;
 use crate::sc2kpict::*;
@@ -23,7 +23,19 @@ pub struct SC2KCityData {
 }
 
 impl SC2KCityData {
-    /// Extracts the city name from CNAM chu
+    pub fn decompress(data: &[u8]) -> Vec<u8> {
+        let buffer = Vec::new();
+
+        if data[0] < 128 {
+            print!("Uncompressed");
+        } else if data[0] > 128 {
+            print!("Compressed");
+        }
+
+        buffer
+    }
+
+    /// Extracts the city name from CNAM chunk.
     pub fn extract_city_data(&mut self) {
         match self.chunks.get("CNAM") {
             Some(chunk) => {
@@ -37,15 +49,15 @@ impl SC2KCityData {
                     }
                 }
                 self.city.name = name.clone();
-            },
-            None => {},
+            }
+            None => {}
         }
 
         match self.chunks.get("MISC") {
             Some(chunk) => {
                 self.city = SC2KCity::extract_misc_data(self.city.name.clone(), &chunk).unwrap();
-            },
-            None => {},
+            }
+            None => {}
         }
     }
 
@@ -54,15 +66,15 @@ impl SC2KCityData {
         match self.chunks.get("PICT") {
             Some(chunk) => {
                 self.pict = SC2KPict::extract_data(&chunk).unwrap();
-            },
-            None => {},
+            }
+            None => {}
         }
     }
 
     /// Returns the SimCity 2000 City Data
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `file_path` - A string containing the path to the city file.
     pub fn read_sc2k_city_file(file_path: &str) -> io::Result<SC2KCityData> {
         let mut file = File::open(file_path)?;
@@ -73,7 +85,8 @@ impl SC2KCityData {
         let mut cursor = 0;
 
         // Extract all chunks
-        while cursor < length - 4 { // Reduce by container close
+        while cursor < length - 4 {
+            // Reduce by container close
             // Get the ASII ID
             let c1 = file.read_u8()?;
             let c2 = file.read_u8()?;
