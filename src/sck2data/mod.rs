@@ -23,16 +23,31 @@ pub struct SC2KCityData {
 }
 
 impl SC2KCityData {
-    pub fn decompress(data: &[u8]) -> Vec<u8> {
-        let buffer = Vec::new();
-
-        if data[0] < 128 {
-            print!("Uncompressed");
-        } else if data[0] > 128 {
-            print!("Compressed");
+    pub fn decompress_chunk(c_data: Vec<u8>) -> io::Result<Vec<u8>> {
+        let mut u_data: Vec<u8> = Vec::new();
+        let mut buffer = &c_data[0..c_data.len()];
+        let mut counter = 0;
+        while counter < c_data.len() {
+            let in_number = buffer.read_u8()?;
+            counter += 1;
+            let in_value = in_number;
+            if in_value < 128 {
+                for _ in 0..in_value {
+                    let value = buffer.read_u8()?;
+                    u_data.push(value);
+                    counter += 1;
+                }
+            } else if in_value > 128 {
+                let value = buffer.read_u8()?;
+                let length = in_value - 127;
+                for _n in 0..length {
+                    u_data.push(value.clone());
+                }
+                counter += 1;
+            }
         }
 
-        buffer
+        Ok(u_data)
     }
 
     /// Extracts the city name from CNAM chunk.
@@ -55,7 +70,7 @@ impl SC2KCityData {
 
         match self.chunks.get("MISC") {
             Some(chunk) => {
-                self.city = SC2KCity::extract_misc_data(self.city.name.clone(), &chunk).unwrap();
+                SC2KCity::extract_misc_data(&mut self.city, &chunk).unwrap();
             }
             None => {}
         }
@@ -76,7 +91,7 @@ impl SC2KCityData {
     /// # Arguments
     ///
     /// * `file_path` - A string containing the path to the city file.
-    pub fn read_sc2k_city_file(file_path: &str) -> io::Result<SC2KCityData> {
+    pub fn read_sc2k_city_file(file_path: String) -> io::Result<SC2KCityData> {
         let mut file = File::open(file_path)?;
         let file_type = file.read_u32::<BigEndian>()?;
         let length = file.read_u32::<BigEndian>()?;
@@ -98,14 +113,21 @@ impl SC2KCityData {
             let size = file.read_u32::<BigEndian>()?;
 
             // Read the data
-            let mut data = vec![0; size as usize];
-            file.read_exact(&mut data)?;
+            let mut c_data = vec![0; size as usize];
+            file.read_exact(&mut c_data)?;
+
+            let u_data;
+            if id == "CNAM" || id == "ALTM" || id == "PICT" {
+                u_data = c_data;
+            } else {
+                u_data = SC2KCityData::decompress_chunk(c_data)?;
+            }
 
             // Generate a tile out of the chunk.
             let chunk = SC2KChunk {
                 id: id.clone(),
                 length: size,
-                data,
+                data: u_data,
             };
             chunks.insert(id.clone(), chunk);
 
