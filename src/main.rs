@@ -1,6 +1,7 @@
 pub mod sck2data;
 pub mod sc2kcity;
 pub mod sc2kpict;
+pub mod sc2map;
 
 use std::env;
 
