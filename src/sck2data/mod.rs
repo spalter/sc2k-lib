@@ -4,7 +4,7 @@ use std::{collections::HashMap, fs::File};
 
 use crate::sc2kcity::*;
 use crate::sc2kpict::*;
-use crate::sc2map::SC2Map;
+use crate::sc2map::SC2KMap;
 
 #[derive(Debug)]
 pub struct SC2KChunk {
@@ -21,7 +21,7 @@ pub struct SC2KCityData {
     pub chunks: HashMap<String, SC2KChunk>,
     pub city: SC2KCity,
     pub pict: SC2KPict,
-    pub altm: SC2Map,
+    pub altm: SC2KMap,
 }
 
 impl SC2KCityData {
@@ -91,7 +91,7 @@ impl SC2KCityData {
     pub fn extract_altm_data(&mut self) {
         match self.chunks.get("ALTM") {
             Some(chunk) => {
-                self.altm = SC2Map::extract_tiles(&chunk).unwrap();
+                self.altm = SC2KMap::extract_altm_tiles(&chunk).unwrap();
             }
             None => {}
         }
@@ -148,7 +148,7 @@ impl SC2KCityData {
 
         let city = SC2KCity::default();
         let pict = SC2KPict::default();
-        let altm: SC2Map = SC2Map::default();
+        let altm: SC2KMap = SC2KMap::default();
 
         let mut city_data = SC2KCityData {
             file_type,
