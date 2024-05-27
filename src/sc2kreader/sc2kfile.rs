@@ -145,6 +145,9 @@ impl SC2KFile {
                 "ALTM" => self.map.extract_tiles_altm(&chunk)?,
                 "XBLD" => self.map.extract_tiles_xbld(&chunk)?,
                 "XBIT" => self.map.extract_tiles_xbit(&chunk)?,
+                "XTER" => self.map.extract_tiles_xter(&chunk)?,
+                "XUND" => self.map.extract_tiles_xund(&chunk)?,
+                "XZON" => self.map.extract_tiles_xzon(&chunk)?,
                 _ => {}
             }
 

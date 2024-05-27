@@ -12,8 +12,9 @@ pub struct SC2KMapTile {
     pub is_water: u16,
     pub flag: u8,
     pub building: u8,
-    pub terrain: u16,
-    pub underground: u16,
+    pub terrain: u8,
+    pub underground: u8,
+    pub zone: u8,
 }
 
 #[derive(Debug, Default)]
@@ -124,6 +125,72 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             self.tiles[y][x].flag = chunk_data.read_u8()?;
+            x+=1;
+
+            if x==MAP_SIZE {
+                x=0;
+                y+=1;
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extracts the terrain information for all tiles.
+    /// 
+    /// # Arguments
+    /// 
+    /// `chunk` - XTER chunk from a SimCity 2000 file.
+    pub fn extract_tiles_xter(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
+        let mut x: usize = 0;
+        let mut y: usize = 0;
+        let mut chunk_data = &chunk.data[0..chunk.data.len()];
+        while !chunk_data.is_empty() {
+            self.tiles[y][x].terrain = chunk_data.read_u8()?;
+            x+=1;
+
+            if x==MAP_SIZE {
+                x=0;
+                y+=1;
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extracts the underground information for all tiles.
+    /// 
+    /// # Arguments
+    /// 
+    /// `chunk` - XUND chunk from a SimCity 2000 file.
+    pub fn extract_tiles_xund(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
+        let mut x: usize = 0;
+        let mut y: usize = 0;
+        let mut chunk_data = &chunk.data[0..chunk.data.len()];
+        while !chunk_data.is_empty() {
+            self.tiles[y][x].underground = chunk_data.read_u8()?;
+            x+=1;
+
+            if x==MAP_SIZE {
+                x=0;
+                y+=1;
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extracts the zone information for all tiles.
+    /// 
+    /// # Arguments
+    /// 
+    /// `chunk` - XZON chunk from a SimCity 2000 file.
+    pub fn extract_tiles_xzon(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
+        let mut x: usize = 0;
+        let mut y: usize = 0;
+        let mut chunk_data = &chunk.data[0..chunk.data.len()];
+        while !chunk_data.is_empty() {
+            self.tiles[y][x].zone = chunk_data.read_u8()?;
             x+=1;
 
             if x==MAP_SIZE {
