@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["cities/bobland.sc2"],
+            "args": ["assets/bobland.sc2"],
             "cwd": "${workspaceFolder}"
         },
         {
@@ -38,7 +38,7 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": ["assets/Utopia.sc2"],
             "cwd": "${workspaceFolder}"
         }
     ]
