@@ -4,7 +4,7 @@ use std::{fs::File, io::Read, process::Command};
 
 #[test]
 fn test_debug_mode() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("sc2k-lib")?;
+    let mut cmd = Command::cargo_bin("sc2kcli")?;
     cmd.arg("-d").arg("assets/Utopia.sc2");
     cmd.assert()
         .success()
@@ -15,7 +15,7 @@ fn test_debug_mode() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn test_json_mode() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("sc2k-lib")?;
+    let mut cmd = Command::cargo_bin("sc2kcli")?;
     let mut file_handle = File::open("assets/Utopia.json")?;
     let mut buf: String = String::new();
     file_handle.read_to_string(&mut buf)?;
@@ -27,7 +27,7 @@ fn test_json_mode() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn test_missing_params() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("sc2k-lib")?;
+    let mut cmd = Command::cargo_bin("sc2kcli")?;
     cmd.arg("-d");
     cmd.assert()
         .failure()
