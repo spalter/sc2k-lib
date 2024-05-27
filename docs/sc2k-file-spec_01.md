@@ -1,7 +1,5 @@
 # SimCity 2000 Windows 95 .sc2 File Specification
 
-[Credits](https://github.com/dfloer/SC2k-docs/blob/master/sc2%20file%20spec.md#misc)
-
 ## Basic File Layout
 
 The basic file structure is of an EA IFF file: \

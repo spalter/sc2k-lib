@@ -7,7 +7,7 @@ Simple project to read and convert SimCity 2000 files written in Rust.
 ```
 
 ## Credits
-All implementation details came from those two sources:
+All implementation details came from the following two sources. They did a gread job documenting the file specs!
 
-- [docs/sc2kinfo_moews.txt](Blah)
-- [docs/sc2k-file-spec_01.md](Blah)
+- [David Moews](https://djm.cc/simcity-2000-info.txt)
+- [dfloer](https://github.com/dfloer/SC2k-docs/tree/master)
