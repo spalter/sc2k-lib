@@ -1,8 +1,8 @@
-pub mod sc2klib;
+extern crate sc2klib;
 
 use std::process::exit;
 
-use crate::sc2klib::sc2kfile::SC2KFile;
+use sc2klib::sc2kfile::SC2KFile;
 
 fn main() -> std::io::Result<()> {
     if std::env::args().len() < 3 {
