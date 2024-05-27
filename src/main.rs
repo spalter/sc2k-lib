@@ -1,11 +1,8 @@
-pub mod sck2data;
-pub mod sc2kcity;
-pub mod sc2kpict;
-pub mod sc2map;
+pub mod sc2kreader;
 
 use std::env;
 
-use sck2data::*;
+use crate::sc2kreader::sc2kfile::SC2KFile;
 
 fn main() -> std::io::Result<()> {
     let mut args: Vec<String> = env::args().collect();
@@ -13,8 +10,8 @@ fn main() -> std::io::Result<()> {
 
     for file in args {
         println!("Load {:?}", file);
-        let city_data = SC2KCityData::read_sc2k_city_file(file)?;
-        println!("{:?}", city_data.city);
+        let city_data = SC2KFile::new(file)?;
+        println!("{:?}", city_data.map.stats);
     }
 
     Ok(())
