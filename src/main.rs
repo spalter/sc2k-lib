@@ -1,8 +1,9 @@
-pub mod sc2kreader;
+pub mod sc2klib;
 
 use std::env;
 
-use crate::sc2kreader::sc2kfile::SC2KFile;
+use crate::sc2klib::sc2kfile::SC2KFile;
+
 
 fn main() -> std::io::Result<()> {
     let mut args: Vec<String> = env::args().collect();
