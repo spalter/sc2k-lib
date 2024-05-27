@@ -6,6 +6,7 @@ use super::{sc2kfile::SC2KFileChunk, sc2kstats::SC2KStats};
 
 const MAP_SIZE: usize = 128;
 
+/// SimCity 2000 map tile
 #[derive(Debug, Default, Clone)]
 pub struct SC2KMapTile {
     pub altitute: u16,
@@ -18,6 +19,11 @@ pub struct SC2KMapTile {
 }
 
 impl SC2KMapTile {
+    /// Convert the tile to JSON
+    /// 
+    /// # Returns
+    /// 
+    /// `String` - JSON string
     pub fn to_json(&self) -> String {
         let tile = format!(
                 "{{\"altitude\":{},\"is_water\":{},\"building\":{},\"terrain\":{},\"underground\":{},\"zone\":{},\"flag\":{}}},",
@@ -28,6 +34,7 @@ impl SC2KMapTile {
     }
 }
 
+/// SimCity 2000 map data
 #[derive(Debug, Default)]
 pub struct SC2KMap {
     pub tiles: Vec<Vec<SC2KMapTile>>,
@@ -230,6 +237,11 @@ impl SC2KMap {
         (value >> start) & mask
     }
 
+    /// Convert the map to JSON
+    /// 
+    /// # Returns
+    /// 
+    /// `String` - JSON string
     pub fn to_json(&self) -> String {
         let name = format!("\"name\":\"{}\"", self.name);
         let mut tiles = format!("\"tiles\":[");

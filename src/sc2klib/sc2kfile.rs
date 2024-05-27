@@ -4,6 +4,8 @@ use byteorder::{BigEndian, ReadBytesExt};
 
 use super::{sc2kmap::SC2KMap, sc2kpict::SC2KPict};
 
+/// SimCity 2000 chunk
+/// Contains either tile data or other information
 #[derive(Debug, Default)]
 pub struct SC2KFileChunk {
     pub id: String,
@@ -160,6 +162,11 @@ impl SC2KFile {
         Ok(())
     }
 
+    /// Convert the map data to JSON
+    /// 
+    /// # Returns
+    /// 
+    /// `String` - JSON string
     pub fn to_json(&self) -> String {
         format!("{{{}}}", self.map.to_json())
     }

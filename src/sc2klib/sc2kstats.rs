@@ -4,6 +4,7 @@ use byteorder::{BigEndian, ReadBytesExt};
 
 use super::sc2kfile::SC2KFileChunk;
 
+/// SimCity 2000 stats
 #[derive(Debug, Default)]
 pub struct SC2KStats {
     pub header: u32,
@@ -60,6 +61,11 @@ impl SC2KStats {
         self.work_force_percent = chunk_data.read_u32::<BigEndian>().unwrap();
     }
 
+    /// Converts the stats to a JSON string.
+    /// 
+    /// # Returns
+    /// 
+    /// `String` - JSON string
     pub fn to_json(&self) -> String{
         let stats = format!(
                 "{{\"mode\":{},\"year_founded\":{},\"age\":{},\"money\":{},\"bonds\":{},\"level\":{},\"status\":{}}}",
