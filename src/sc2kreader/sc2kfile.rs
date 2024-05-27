@@ -139,10 +139,12 @@ impl SC2KFile {
             };
 
             match id.as_str() {
+                "PICT" => self.pict.extract_data(&chunk)?,
                 "CNAM" => self.map.extract_name(&chunk),
                 "MISC" => self.map.extract_stats(&chunk)?,
                 "ALTM" => self.map.extract_tiles_altm(&chunk)?,
-                "PICT" => self.pict.extract_data(&chunk)?,
+                "XBLD" => self.map.extract_tiles_xbld(&chunk)?,
+                "XBIT" => self.map.extract_tiles_xbit(&chunk)?,
                 _ => {}
             }
 

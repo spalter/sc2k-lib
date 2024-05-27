@@ -10,8 +10,8 @@ const MAP_SIZE: usize = 128;
 pub struct SC2KMapTile {
     pub altitute: u16,
     pub is_water: u16,
-    pub flags: u16,
-    pub building: u16,
+    pub flag: u8,
+    pub building: u8,
     pub terrain: u16,
     pub underground: u16,
 }
@@ -68,7 +68,7 @@ impl SC2KMap {
     ///
     /// # Arguments
     ///
-    /// `chunk` - ALTM chunk from a SimCity 2000 city file.
+    /// `chunk` - ALTM chunk from a SimCity 2000 file.
     /// 
     /// # Errors
     /// 
@@ -88,6 +88,50 @@ impl SC2KMap {
                 y += 1;
             }
         }
+        Ok(())
+    }
+
+    /// Extracts the Building type information for all tiles.
+    /// 
+    /// # Arguments
+    /// 
+    /// `chunk` - XBLD chunk from a SimCity 2000 file.
+    pub fn extract_tiles_xbld(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
+        let mut x: usize = 0;
+        let mut y: usize = 0;
+        let mut chunk_data = &chunk.data[0..chunk.data.len()];
+        while !chunk_data.is_empty() {
+            self.tiles[y][x].building = chunk_data.read_u8()?;
+            x+=1;
+
+            if x==MAP_SIZE {
+                x=0;
+                y+=1;
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extracts the flag information for all tiles.
+    /// 
+    /// # Arguments
+    /// 
+    /// `chunk` - XBIT chunk from a SimCity 2000 file.
+    pub fn extract_tiles_xbit(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
+        let mut x: usize = 0;
+        let mut y: usize = 0;
+        let mut chunk_data = &chunk.data[0..chunk.data.len()];
+        while !chunk_data.is_empty() {
+            self.tiles[y][x].flag = chunk_data.read_u8()?;
+            x+=1;
+
+            if x==MAP_SIZE {
+                x=0;
+                y+=1;
+            }
+        }
+
         Ok(())
     }
 
