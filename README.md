@@ -3,12 +3,14 @@ Simple project to read and convert SimCity 2000 files written in Rust.
 
 ## Usage
 
-Debug information
+### Debug information
+This will output the debug information in the console. City name, a few stats, but no tile information.
 ```bash
 ./sc2k-lib -d [.SC2]
 ```
 
-JSON output
+### JSON output
+This will output a JSON representation of the file in the console.
 ```bash
 ./sc2k-lib -j [.SC2]
 ```
