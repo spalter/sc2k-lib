@@ -159,4 +159,8 @@ impl SC2KFile {
 
         Ok(())
     }
+
+    pub fn to_json(&self) -> String {
+        format!("{{{}}}", self.map.to_json())
+    }
 }

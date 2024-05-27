@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
         "-j" | "--json" => {
             let path = std::env::args().nth(2).expect("Missing file path eg. cities/my_city.sc2.");
             let city_data = SC2KFile::new(path)?;
-            println!("{:?}", city_data);
+            println!("{}", city_data.to_json());
         }
         _ => {}
     }

@@ -59,4 +59,12 @@ impl SC2KStats {
         self.garbage = chunk_data.read_u32::<BigEndian>().unwrap();
         self.work_force_percent = chunk_data.read_u32::<BigEndian>().unwrap();
     }
+
+    pub fn to_json(&self) -> String{
+        let stats = format!(
+                "{{\"mode\":{},\"year_founded\":{},\"age\":{},\"money\":{},\"bonds\":{},\"level\":{},\"status\":{}}}",
+                self.mode, self.year_founded, self.age, self.money, self.bonds, self.level, self.status
+        );
+        format!("\"stats\":{}", stats)
+    }
 }

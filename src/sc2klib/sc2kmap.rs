@@ -17,6 +17,17 @@ pub struct SC2KMapTile {
     pub zone: u8,
 }
 
+impl SC2KMapTile {
+    pub fn to_json(&self) -> String {
+        let tile = format!(
+                "{{\"altitude\":{},\"is_water\":{},\"building\":{},\"terrain\":{},\"underground\":{},\"zone\":{},\"flag\":{}}},",
+                self.altitute, self.is_water, self.building, self.terrain, self.underground, self.zone, self.flag
+            );
+
+        tile
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct SC2KMap {
     pub tiles: Vec<Vec<SC2KMapTile>>,
@@ -34,13 +45,13 @@ impl SC2KMap {
     }
 
     /// Extracts the map stats from a MISC chunk.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - MISC chunk from a SimCity 2000 city file.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * IO error
     pub fn extract_stats(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         self.stats = SC2KStats::new(&chunk)?;
@@ -48,9 +59,9 @@ impl SC2KMap {
     }
 
     /// Extracts the map name from a CNAM chunk.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - NAME chunk from a SimCity 2000 city file.
     pub fn extract_name(&mut self, chunk: &SC2KFileChunk) {
         let mut name = String::from("");
@@ -62,6 +73,7 @@ impl SC2KMap {
                 _ => name = format!("{}{}", name, c as char),
             }
         }
+        name = name.trim().to_string();
         self.name = name.clone();
     }
 
@@ -70,9 +82,9 @@ impl SC2KMap {
     /// # Arguments
     ///
     /// `chunk` - ALTM chunk from a SimCity 2000 file.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * IO error
     pub fn extract_tiles_altm(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let mut x: usize = 0;
@@ -93,9 +105,9 @@ impl SC2KMap {
     }
 
     /// Extracts the Building type information for all tiles.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - XBLD chunk from a SimCity 2000 file.
     pub fn extract_tiles_xbld(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let mut x: usize = 0;
@@ -103,11 +115,11 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             self.tiles[y][x].building = chunk_data.read_u8()?;
-            x+=1;
+            x += 1;
 
-            if x==MAP_SIZE {
-                x=0;
-                y+=1;
+            if x == MAP_SIZE {
+                x = 0;
+                y += 1;
             }
         }
 
@@ -115,9 +127,9 @@ impl SC2KMap {
     }
 
     /// Extracts the flag information for all tiles.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - XBIT chunk from a SimCity 2000 file.
     pub fn extract_tiles_xbit(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let mut x: usize = 0;
@@ -125,11 +137,11 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             self.tiles[y][x].flag = chunk_data.read_u8()?;
-            x+=1;
+            x += 1;
 
-            if x==MAP_SIZE {
-                x=0;
-                y+=1;
+            if x == MAP_SIZE {
+                x = 0;
+                y += 1;
             }
         }
 
@@ -137,9 +149,9 @@ impl SC2KMap {
     }
 
     /// Extracts the terrain information for all tiles.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - XTER chunk from a SimCity 2000 file.
     pub fn extract_tiles_xter(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let mut x: usize = 0;
@@ -147,11 +159,11 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             self.tiles[y][x].terrain = chunk_data.read_u8()?;
-            x+=1;
+            x += 1;
 
-            if x==MAP_SIZE {
-                x=0;
-                y+=1;
+            if x == MAP_SIZE {
+                x = 0;
+                y += 1;
             }
         }
 
@@ -159,9 +171,9 @@ impl SC2KMap {
     }
 
     /// Extracts the underground information for all tiles.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - XUND chunk from a SimCity 2000 file.
     pub fn extract_tiles_xund(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let mut x: usize = 0;
@@ -169,11 +181,11 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             self.tiles[y][x].underground = chunk_data.read_u8()?;
-            x+=1;
+            x += 1;
 
-            if x==MAP_SIZE {
-                x=0;
-                y+=1;
+            if x == MAP_SIZE {
+                x = 0;
+                y += 1;
             }
         }
 
@@ -181,9 +193,9 @@ impl SC2KMap {
     }
 
     /// Extracts the zone information for all tiles.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - XZON chunk from a SimCity 2000 file.
     pub fn extract_tiles_xzon(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let mut x: usize = 0;
@@ -191,11 +203,11 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             self.tiles[y][x].zone = chunk_data.read_u8()?;
-            x+=1;
+            x += 1;
 
-            if x==MAP_SIZE {
-                x=0;
-                y+=1;
+            if x == MAP_SIZE {
+                x = 0;
+                y += 1;
             }
         }
 
@@ -203,18 +215,39 @@ impl SC2KMap {
     }
 
     /// Extracts bits from a tile byte to get the altitute or water status.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `value` - Tile byte
     /// `start` - Start bit
     /// `length` - Length of bits
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// `u16` - Bits from tile byte
     fn extract_bits(value: u16, start: u8, length: u8) -> u16 {
         let mask = (1 << length) - 1;
         (value >> start) & mask
+    }
+
+    pub fn to_json(&self) -> String {
+        let name = format!("\"name\":\"{}\"", self.name);
+        let mut tiles = format!("\"tiles\":[");
+
+        for y in &self.tiles {
+            let mut row = format!("{{\"row\":[");
+            for x in y {
+                row = format!("{}{}", row, x.to_json());
+            }
+            row.pop();
+            row = format!("{}]}},", row);
+            tiles = format!("{}{}", tiles, row);
+        }
+        tiles.pop();
+        tiles = format!("{}]", tiles);
+
+        let stats = self.stats.to_json();
+
+        format!("{},{},{}", name, stats, tiles)
     }
 }
