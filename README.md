@@ -2,8 +2,15 @@
 Simple project to read and convert SimCity 2000 files written in Rust.
 
 ## Usage
+
+Debug information
 ```bash
-./sc2k-reader [.SC2]
+./sc2k-lib -d [.SC2]
+```
+
+JSON output
+```bash
+./sc2k-lib -j [.SC2]
 ```
 
 
