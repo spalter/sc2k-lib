@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'sc2k-reader'",
+            "name": "Debug executable 'sc2k-lib'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=sc2k-reader",
-                    "--package=sc2k-reader"
+                    "--bin=sc2k-lib",
+                    "--package=sc2k-lib"
                 ],
                 "filter": {
-                    "name": "sc2k-reader",
+                    "name": "sc2k-lib",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'sc2k-reader'",
+            "name": "Debug unit tests in executable 'sc2k-lib'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=sc2k-reader",
-                    "--package=sc2k-reader"
+                    "--bin=sc2k-lib",
+                    "--package=sc2k-lib"
                 ],
                 "filter": {
-                    "name": "sc2k-reader",
+                    "name": "sc2k-lib",
                     "kind": "bin"
                 }
             },
