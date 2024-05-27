@@ -5,10 +5,6 @@ use std::{fs::File, io::Read, process::Command};
 #[test]
 fn test_debug_mode() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("sc2k-lib")?;
-    let mut file_handle = File::open("assets/Utopia.json")?;
-    let mut buf: String = String::new();
-    file_handle.read_to_string(&mut buf)?;
-
     cmd.arg("-d").arg("assets/Utopia.sc2");
     cmd.assert()
         .success()
@@ -23,11 +19,19 @@ fn test_json_mode() -> Result<(), Box<dyn std::error::Error>> {
     let mut file_handle = File::open("assets/Utopia.json")?;
     let mut buf: String = String::new();
     file_handle.read_to_string(&mut buf)?;
-
     cmd.arg("-j").arg("assets/Utopia.sc2");
+    cmd.assert().success().stdout(predicate::str::contains(buf));
+
+    Ok(())
+}
+
+#[test]
+fn test_missing_params() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("sc2k-lib")?;
+    cmd.arg("-d");
     cmd.assert()
-        .success()
-        .stdout(predicate::str::contains(buf));
+        .failure()
+        .stdout(predicate::str::contains("<action> <file>"));
 
     Ok(())
 }
