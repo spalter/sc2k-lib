@@ -20,9 +20,9 @@ pub struct SC2KMapTile {
 
 impl SC2KMapTile {
     /// Convert the tile to JSON
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// `String` - JSON string
     pub fn to_json(&self) -> String {
         let tile = format!(
@@ -238,9 +238,9 @@ impl SC2KMap {
     }
 
     /// Convert the map to JSON
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// `String` - JSON string
     pub fn to_json(&self) -> String {
         let name = format!("\"name\":\"{}\"", self.name);

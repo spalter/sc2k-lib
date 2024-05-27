@@ -1,4 +1,8 @@
-use std::{collections::HashMap, fs::File, io::{self, Read}};
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::{self, Read},
+};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -14,7 +18,7 @@ pub struct SC2KFileChunk {
 }
 
 /// SimCity 2000 file reader
-/// 
+///
 /// TODO: Missing a few chunk implementations
 #[derive(Debug, Default)]
 pub struct SC2KFile {
@@ -29,13 +33,13 @@ pub struct SC2KFile {
 
 impl SC2KFile {
     /// Creates a new SimCity 2000 object from a SimCity 2000 file.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `path` - Path to the SimCity 2000 file
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * IO error
     pub fn new(path: String) -> io::Result<SC2KFile> {
         let mut sc2k_file = SC2KFile {
@@ -58,17 +62,17 @@ impl SC2KFile {
     /// First byte contains the number of following uncompressed bytes.
     /// In case the first byte is greater than 128, the following byte needs to be
     /// repeated the number of times equal to the first byte minus 127.
-    /// 
+    ///
     /// Arguments
-    /// 
+    ///
     /// * `c_data` - Chunk data
-    /// 
+    ///
     /// Returns
-    /// 
+    ///
     /// * `u_data` - Decompressed chunk data
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * IO error
     pub fn decompress_chunk(c_data: Vec<u8>) -> io::Result<Vec<u8>> {
         let mut u_data: Vec<u8> = Vec::new();
@@ -98,9 +102,9 @@ impl SC2KFile {
     }
 
     /// Reads the SimCity 2000 file.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// * IO error
     fn read_sc2k_file(&mut self) -> io::Result<()> {
         let mut file_handle = File::open(self.path.clone())?;
@@ -163,9 +167,9 @@ impl SC2KFile {
     }
 
     /// Convert the map data to JSON
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// `String` - JSON string
     pub fn to_json(&self) -> String {
         format!("{{{}}}", self.map.to_json())

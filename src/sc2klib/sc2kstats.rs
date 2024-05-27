@@ -28,16 +28,16 @@ pub struct SC2KStats {
 }
 
 impl SC2KStats {
-    pub fn new (chunk: &SC2KFileChunk) -> io::Result<SC2KStats> {
+    pub fn new(chunk: &SC2KFileChunk) -> io::Result<SC2KStats> {
         let mut stats = SC2KStats::default();
         stats.extract_stats(&chunk);
         Ok(stats)
     }
 
     /// Extracts the stats from a chunk.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - MISC chunk from a SimCity 2000 city file.
     fn extract_stats(&mut self, chunk: &SC2KFileChunk) {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
@@ -62,11 +62,11 @@ impl SC2KStats {
     }
 
     /// Converts the stats to a JSON string.
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// `String` - JSON string
-    pub fn to_json(&self) -> String{
+    pub fn to_json(&self) -> String {
         let stats = format!(
                 "{{\"mode\":{},\"year_founded\":{},\"age\":{},\"money\":{},\"bonds\":{},\"level\":{},\"status\":{}}}",
                 self.mode, self.year_founded, self.age, self.money, self.bonds, self.level, self.status

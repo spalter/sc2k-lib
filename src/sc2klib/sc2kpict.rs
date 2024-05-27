@@ -19,9 +19,9 @@ pub struct SC2KPict {
 
 impl SC2KPict {
     /// Extracts the picture data from a chunk.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `chunk` - PICT chunk from a SimCity 2000 city file.
     pub fn extract_data(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
         let data = chunk.data.clone();
