@@ -24,8 +24,7 @@ impl SC2KMapTile {
             tile = format!("{}\"{}\":{},", tile, att.0, att.1);
         }
         tile.pop();
-        tile = format!("{}}},", tile);
-        tile
+        format!("{}}},", tile)
     }
 }
 
