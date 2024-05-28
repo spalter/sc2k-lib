@@ -24,11 +24,11 @@ fn main() -> std::io::Result<()> {
     match pattern.as_str() {
         "-d" | "--debug" => {
             println!("Try load: {:?}", &path);
-            let city_data = SC2KFile::new(path)?;
+            let city_data = SC2KFile::from(path)?;
             println!("{:?}", city_data.map.stats);
         }
         "-j" | "--json" => {
-            let city_data = SC2KFile::new(path)?;
+            let city_data = SC2KFile::from(path)?;
             println!("{}", city_data.to_json());
         }
         _ => {}

@@ -1,4 +1,4 @@
-use std::io;
+use std::{collections::HashMap, io};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -9,13 +9,7 @@ const MAP_SIZE: usize = 128;
 /// SimCity 2000 map tile
 #[derive(Debug, Default, Clone)]
 pub struct SC2KMapTile {
-    pub altitute: u16,
-    pub is_water: u16,
-    pub flag: u8,
-    pub building: u8,
-    pub terrain: u8,
-    pub underground: u8,
-    pub zone: u8,
+    pub attributes: HashMap<String, u8>,
 }
 
 impl SC2KMapTile {
@@ -25,11 +19,12 @@ impl SC2KMapTile {
     ///
     /// `String` - JSON string
     pub fn to_json(&self) -> String {
-        let tile = format!(
-                "{{\"altitude\":{},\"is_water\":{},\"building\":{},\"terrain\":{},\"underground\":{},\"zone\":{},\"flag\":{}}},",
-                self.altitute, self.is_water, self.building, self.terrain, self.underground, self.zone, self.flag
-            );
-
+        let mut tile = String::from("{");
+        for att in &self.attributes {
+            tile = format!("{}\"{}\":{},", tile, att.0, att.1);
+        }
+        tile.pop();
+        tile = format!("{}}},", tile);
         tile
     }
 }
@@ -99,8 +94,14 @@ impl SC2KMap {
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
             let tile_bytes = chunk_data.read_u16::<BigEndian>()?;
-            self.tiles[y][x].altitute = SC2KMap::extract_bits(tile_bytes, 0, 4);
-            self.tiles[y][x].is_water = SC2KMap::extract_bits(tile_bytes, 7, 1);
+            self.tiles[y][x].attributes.insert(
+                String::from("ALTM"),
+                SC2KMap::extract_bits(tile_bytes, 0, 4) as u8,
+            );
+            self.tiles[y][x].attributes.insert(
+                String::from("WATR"),
+                SC2KMap::extract_bits(tile_bytes, 7, 1) as u8,
+            );
             x += 1;
 
             if x == MAP_SIZE {
@@ -111,105 +112,24 @@ impl SC2KMap {
         Ok(())
     }
 
-    /// Extracts the Building type information for all tiles.
+    /// Extracts the tile altitute data from an a one byte chunk.
     ///
     /// # Arguments
     ///
-    /// `chunk` - XBLD chunk from a SimCity 2000 file.
-    pub fn extract_tiles_xbld(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
+    /// `chunk` - one byte chunk from a SimCity 2000 file.
+    /// `key` - chunk ID to store the attribute.
+    ///
+    /// # Errors
+    ///
+    /// * IO error
+    pub fn extract_tiles(&mut self, chunk: &SC2KFileChunk, key: String) -> io::Result<()> {
         let mut x: usize = 0;
         let mut y: usize = 0;
         let mut chunk_data = &chunk.data[0..chunk.data.len()];
         while !chunk_data.is_empty() {
-            self.tiles[y][x].building = chunk_data.read_u8()?;
-            x += 1;
-
-            if x == MAP_SIZE {
-                x = 0;
-                y += 1;
-            }
-        }
-
-        Ok(())
-    }
-
-    /// Extracts the flag information for all tiles.
-    ///
-    /// # Arguments
-    ///
-    /// `chunk` - XBIT chunk from a SimCity 2000 file.
-    pub fn extract_tiles_xbit(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
-        let mut x: usize = 0;
-        let mut y: usize = 0;
-        let mut chunk_data = &chunk.data[0..chunk.data.len()];
-        while !chunk_data.is_empty() {
-            self.tiles[y][x].flag = chunk_data.read_u8()?;
-            x += 1;
-
-            if x == MAP_SIZE {
-                x = 0;
-                y += 1;
-            }
-        }
-
-        Ok(())
-    }
-
-    /// Extracts the terrain information for all tiles.
-    ///
-    /// # Arguments
-    ///
-    /// `chunk` - XTER chunk from a SimCity 2000 file.
-    pub fn extract_tiles_xter(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
-        let mut x: usize = 0;
-        let mut y: usize = 0;
-        let mut chunk_data = &chunk.data[0..chunk.data.len()];
-        while !chunk_data.is_empty() {
-            self.tiles[y][x].terrain = chunk_data.read_u8()?;
-            x += 1;
-
-            if x == MAP_SIZE {
-                x = 0;
-                y += 1;
-            }
-        }
-
-        Ok(())
-    }
-
-    /// Extracts the underground information for all tiles.
-    ///
-    /// # Arguments
-    ///
-    /// `chunk` - XUND chunk from a SimCity 2000 file.
-    pub fn extract_tiles_xund(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
-        let mut x: usize = 0;
-        let mut y: usize = 0;
-        let mut chunk_data = &chunk.data[0..chunk.data.len()];
-        while !chunk_data.is_empty() {
-            self.tiles[y][x].underground = chunk_data.read_u8()?;
-            x += 1;
-
-            if x == MAP_SIZE {
-                x = 0;
-                y += 1;
-            }
-        }
-
-        Ok(())
-    }
-
-    /// Extracts the zone information for all tiles.
-    ///
-    /// # Arguments
-    ///
-    /// `chunk` - XZON chunk from a SimCity 2000 file.
-    pub fn extract_tiles_xzon(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
-        let mut x: usize = 0;
-        let mut y: usize = 0;
-        let mut chunk_data = &chunk.data[0..chunk.data.len()];
-        while !chunk_data.is_empty() {
-            self.tiles[y][x].zone = chunk_data.read_u8()?;
+            self.tiles[y][x]
+                .attributes
+                .insert(key.clone(), chunk_data.read_u8()?);
             x += 1;
 
             if x == MAP_SIZE {

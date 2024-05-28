@@ -7,7 +7,7 @@
 //! ```
 //! use sc2klib::sc2kfile::SC2KFile;
 //!
-//! let city_data = SC2KFile::new(String::from("assets/Utopia.sc2")).unwrap();
+//! let city_data = SC2KFile::from(String::from("assets/Utopia.sc2")).unwrap();
 //! println!("{:?}", city_data.to_json());
 //! ```
 

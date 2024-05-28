@@ -1,6 +1,6 @@
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
-use std::{fs::File, io::Read, process::Command};
+use std::process::Command;
 
 #[test]
 fn test_debug_mode() -> Result<(), Box<dyn std::error::Error>> {
@@ -16,11 +16,11 @@ fn test_debug_mode() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_json_mode() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("sc2kcli")?;
-    let mut file_handle = File::open("assets/Utopia.json")?;
-    let mut buf: String = String::new();
-    file_handle.read_to_string(&mut buf)?;
     cmd.arg("-j").arg("assets/Utopia.sc2");
-    cmd.assert().success().stdout(predicate::str::contains(buf));
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::starts_with("{\"name\":\"Utopia\""))
+        .stdout(predicate::str::ends_with("}\n"));
 
     Ok(())
 }

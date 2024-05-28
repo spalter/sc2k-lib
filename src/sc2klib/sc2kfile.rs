@@ -41,7 +41,7 @@ impl SC2KFile {
     /// # Errors
     ///
     /// * IO error
-    pub fn new(path: String) -> io::Result<SC2KFile> {
+    pub fn from(path: String) -> io::Result<SC2KFile> {
         let mut sc2k_file = SC2KFile {
             path: path.clone(),
             chunks: HashMap::new(),
@@ -149,11 +149,19 @@ impl SC2KFile {
                 "CNAM" => self.map.extract_name(&chunk),
                 "MISC" => self.map.extract_stats(&chunk)?,
                 "ALTM" => self.map.extract_tiles_altm(&chunk)?,
-                "XBLD" => self.map.extract_tiles_xbld(&chunk)?,
-                "XBIT" => self.map.extract_tiles_xbit(&chunk)?,
-                "XTER" => self.map.extract_tiles_xter(&chunk)?,
-                "XUND" => self.map.extract_tiles_xund(&chunk)?,
-                "XZON" => self.map.extract_tiles_xzon(&chunk)?,
+                "XBLD" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XBIT" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XTER" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XUND" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XZON" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XPLC" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XFIR" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XPOP" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XROG" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XPLT" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XVAL" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XCRM" => self.map.extract_tiles(&chunk, id.clone())?,
+                "XTRF" => self.map.extract_tiles(&chunk, id.clone())?,
                 _ => {}
             }
 

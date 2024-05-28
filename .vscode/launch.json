@@ -4,19 +4,19 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'sc2k-lib'",
+            "name": "Debug executable 'sc2kcli'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=sc2k-lib",
+                    "--bin=sc2kcli",
                     "--package=sc2k-lib"
                 ],
                 "filter": {
-                    "name": "sc2k-lib",
+                    "name": "sc2kcli",
                     "kind": "bin"
                 }
             },
-            "args": ["assets/bobland.sc2"],
+            "args": ["-d", "assets/bobland.sc2"],
             "cwd": "${workspaceFolder}"
         },
         {
