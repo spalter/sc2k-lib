@@ -9,13 +9,22 @@ This is an unofficial project not related to Maxis or SimCity 2000. The source c
 ### Debug information
 This will output the debug information in the console. The city name and a few stats, but no tile information.
 ```bash
-./sc2k-lib -d [.SC2]
+./sc2kcli -d [.SC2]
 ```
 
 ### JSON output
 This will output a JSON representation of the file in the console.
 ```bash
-./sc2k-lib -j [.SC2]
+./sc2kcli -j [.SC2]
+```
+
+### Lib usage
+The library is split into two parts, a CLI part and a Rust crate. Simply create a new struct with the `SC2KFile::from("path")` function. More details can be found in the rust docs.
+```rust
+use sc2klib::sc2kfile::SC2KFile;
+
+let city_data = SC2KFile::from(String::from("assets/Utopia.sc2")).unwrap();
+println!("{:?}", city_data.to_json());
 ```
 
 ## Credits
