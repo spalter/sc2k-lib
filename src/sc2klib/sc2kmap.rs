@@ -29,22 +29,24 @@ impl SC2KMapTile {
 }
 
 /// SimCity 2000 map data
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct SC2KMap {
     pub tiles: Vec<Vec<SC2KMapTile>>,
     pub stats: SC2KStats,
     pub name: String,
 }
 
-impl SC2KMap {
-    pub fn default() -> Self {
+impl Default for SC2KMap {
+    fn default() -> Self {
         SC2KMap {
             tiles: vec![vec![SC2KMapTile::default(); MAP_SIZE]; MAP_SIZE],
             stats: SC2KStats::default(),
             name: String::new(),
         }
     }
+}
 
+impl SC2KMap {
     /// Extracts the map stats from a MISC chunk.
     ///
     /// # Arguments
@@ -55,7 +57,7 @@ impl SC2KMap {
     ///
     /// * IO error
     pub fn extract_stats(&mut self, chunk: &SC2KFileChunk) -> io::Result<()> {
-        self.stats = SC2KStats::new(&chunk)?;
+        self.stats = SC2KStats::new(chunk)?;
         Ok(())
     }
 
@@ -163,10 +165,10 @@ impl SC2KMap {
     /// `String` - JSON string
     pub fn to_json(&self) -> String {
         let name = format!("\"name\":\"{}\"", self.name);
-        let mut tiles = format!("\"tiles\":[");
+        let mut tiles = "\"tiles\":[".to_string();
 
         for y in &self.tiles {
-            let mut row = format!("{{\"row\":[");
+            let mut row = "{\"row\":[".to_string();
             for x in y {
                 row = format!("{}{}", row, x.to_json());
             }

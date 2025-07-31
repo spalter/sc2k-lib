@@ -30,7 +30,7 @@ pub struct SC2KStats {
 impl SC2KStats {
     pub fn new(chunk: &SC2KFileChunk) -> io::Result<SC2KStats> {
         let mut stats = SC2KStats::default();
-        stats.extract_stats(&chunk);
+        stats.extract_stats(chunk);
         Ok(stats)
     }
 

@@ -92,7 +92,7 @@ impl SC2KFile {
                 let value = buffer.read_u8()?;
                 let length = in_value - 127;
                 for _n in 0..length {
-                    u_data.push(value.clone());
+                    u_data.push(value);
                 }
                 counter += 1;
             }
@@ -130,10 +130,8 @@ impl SC2KFile {
             let mut c_data = vec![0; size as usize];
             file_handle.read_exact(&mut c_data)?;
 
-            let u_data;
-            if id == "CNAM" || id == "ALTM" || id == "PICT" {
-                u_data = c_data;
-            } else {
+            let mut u_data = c_data.clone();
+            if id != "CNAM" && id != "ALTM" && id != "PICT" {
                 u_data = SC2KFile::decompress_chunk(c_data)?;
             }
 
