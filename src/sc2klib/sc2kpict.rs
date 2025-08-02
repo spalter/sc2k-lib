@@ -33,4 +33,17 @@ impl SC2KPict {
 
         Ok(())
     }
+
+    pub fn contract_data(&self) -> Vec<u8> {
+        vec![
+            self.header[0],
+            self.header[1],
+            self.header[2],
+            self.header[3],
+            self.x_size as u8,
+            (self.x_size >> 8) as u8,
+            self.y_size as u8,
+            (self.y_size >> 8) as u8,
+        ]
+    }
 }

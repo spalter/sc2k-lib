@@ -142,6 +142,26 @@ impl SC2KMap {
         Ok(())
     }
 
+    /// Contracts the tile attributes into a one byte chunk.
+    ///
+    /// # Arguments
+    ///
+    /// `key` - chunk ID to store the attribute.
+    ///
+    /// # Returns
+    ///
+    /// `SC2KFileChunk` - one byte chunk
+    pub fn contract_tiles_to_array(&self, key: String) -> SC2KFileChunk {
+        let mut data = Vec::new();
+        for y in 0..MAP_SIZE {
+            for x in 0..MAP_SIZE {
+                let value = self.tiles[y][x].attributes.get(&key).unwrap();
+                data.push(*value);
+            }
+        }
+        SC2KFileChunk::new(key, data)
+    }
+
     /// Extracts bits from a tile byte to get the altitute or water status.
     ///
     /// # Arguments

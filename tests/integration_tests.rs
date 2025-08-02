@@ -35,3 +35,14 @@ fn test_missing_params() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_round_trip() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("sc2kcli")?;
+    cmd.arg("-c").arg("assets/Utopia.sc2");
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::starts_with("File size: 105168"));
+
+    Ok(())
+}

@@ -21,6 +21,8 @@ fn main() -> std::io::Result<()> {
         .nth(2)
         .expect("Missing file path eg. cities/my_city.sc2.");
 
+    let out_path = format!("{}.bak", path);
+
     match pattern.as_str() {
         "-d" | "--debug" => {
             println!("Try load: {:?}", &path);
@@ -30,6 +32,11 @@ fn main() -> std::io::Result<()> {
         "-j" | "--json" => {
             let city_data = SC2KFile::from(path)?;
             println!("{}", city_data.to_json());
+        }
+        "-c" => {
+            let city_data = SC2KFile::from(path.clone())?;
+            let size = city_data.save_sc2k_file(&out_path)?;
+            println!("File size: {}", size);
         }
         _ => {}
     }

@@ -1,10 +1,10 @@
 use std::{
     collections::HashMap,
-    fs::File,
-    io::{self, Read},
+    fs::{self, File},
+    io::{self, Read, Write},
 };
 
-use byteorder::{BigEndian, ReadBytesExt};
+use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 
 use super::{sc2kmap::SC2KMap, sc2kpict::SC2KPict};
 
@@ -15,6 +15,16 @@ pub struct SC2KFileChunk {
     pub id: String,
     pub length: u32,
     pub data: Vec<u8>,
+}
+
+impl SC2KFileChunk {
+    pub fn new(id: String, data: Vec<u8>) -> SC2KFileChunk {
+        SC2KFileChunk {
+            id,
+            length: data.len() as u32,
+            data,
+        }
+    }
 }
 
 /// SimCity 2000 file reader
@@ -101,6 +111,83 @@ impl SC2KFile {
         Ok(u_data)
     }
 
+    /// Compresses a chunk of data.
+    ///
+    /// A variant of Run-Length Encoding. Comes in two variants, a 1 + n byte version and a two byte version.
+    ///
+    /// 1 + n byte version: first byte is in range [0 .. 127] means that there are n bytes of uncompressed data corresponding to the byte’s value after it.
+    /// 2 byte version: first byte is in range [129 .. 255] means to repeat the next byte n times (the RLE part), where (byte value) - 127 = n.
+    ///
+    /// Note that this encoding scheme can lead to certain sections being larger than if they were uncompressed if they’re very random or alternating data.
+    /// It appears that every byte is compressed, even if it’s a single byte on its own. There are lots of 0x01 followed by single bytes. Runs are compressed as normal.
+    fn compress_chunk(&self, chunk: &SC2KFileChunk) -> Vec<u8> {
+        let mut data = chunk.data.clone();
+        let mut compressed_data = Vec::new();
+        let mut last_byte = data.remove(0);
+        let mut counter = 1;
+        for byte in data {
+            if byte == last_byte {
+                if counter == 127 {
+                    compressed_data.push(128 + counter);
+                    compressed_data.push(last_byte);
+                    last_byte = byte;
+                    counter = 1;
+                } else {
+                    counter += 1;
+                }
+            } else {
+                if counter > 127 {
+                    compressed_data.push(128 + counter);
+                    compressed_data.push(last_byte);
+                } else {
+                    for _ in 0..counter - 1 {
+                        compressed_data.push(last_byte);
+                    }
+                }
+
+                last_byte = byte;
+                counter = 1;
+            }
+        }
+
+        compressed_data
+    }
+
+    /// Saves the SimCity 2000 file.
+    pub fn save_sc2k_file(&self, path: &str) -> io::Result<String> {
+        let mut file_handle = File::create(path)?;
+        file_handle.write_u32::<BigEndian>(self.file_type)?;
+        file_handle.write_u32::<BigEndian>(self.length)?;
+        file_handle.write_u32::<BigEndian>(self.container)?;
+
+        for chunk in &self.chunks {
+            let chunk_name = chunk.1.id.clone();
+            for byte in chunk.1.id.as_bytes() {
+                file_handle.write_u8(*byte)?;
+            }
+            file_handle.write_u32::<BigEndian>(chunk.1.length)?;
+            if chunk_name != "CNAM" && chunk_name != "ALTM" && chunk_name != "PICT" {
+                let compressed_data = self.compress_chunk(chunk.1);
+                file_handle.write_all(&compressed_data)?;
+            } else if chunk_name == "PICT" {
+                let pict_data = self.pict.contract_data();
+                file_handle.write_all(&pict_data)?;
+            } else if chunk_name == "ALTM" {
+                todo!("Implement ALTM contraction")
+            } else if chunk_name == "CNAM" {
+                todo!("Implement CNAM contraction")
+            } else if chunk_name == "MISC" {
+                todo!("Implement MISC contraction")
+            } else {
+                file_handle.write_all(&chunk.1.data)?;
+            }
+        }
+
+        let file_size = fs::metadata(path).unwrap().len();
+
+        Ok(format!("{}", file_size))
+    }
+
     /// Reads the SimCity 2000 file.
     ///
     /// # Errors
@@ -132,7 +219,7 @@ impl SC2KFile {
 
             let mut u_data = c_data.clone();
             if id != "CNAM" && id != "ALTM" && id != "PICT" {
-                u_data = SC2KFile::decompress_chunk(c_data)?;
+                u_data = SC2KFile::decompress_chunk(c_data.clone())?;
             }
 
             // Generate a tile out of the chunk.
